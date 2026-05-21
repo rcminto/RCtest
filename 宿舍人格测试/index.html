@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>大学生人格图鉴 - 你是Bailyn还是Robert？</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#F59E0B',    // 橙色 - 活力
+            secondary: '#10B981',  // 绿色 - 清新
+            accent: '#8B5CF6',     // 紫色 - 创意
+            warm: '#FEF3C7',       // 暖黄背景
+            dark: '#1F2937'
+          },
+          fontFamily: {
+            sans: ['PingFang SC', 'Microsoft YaHei', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .campus-bg {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #F093FB 100%);
+      }
+      .card-shadow {
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+      }
+      .bounce-in {
+        animation: bounceIn 0.5s ease;
+      }
+      @keyframes bounceIn {
+        0% { transform: scale(0.8); opacity: 0; }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); opacity: 1; }
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  
+  <!-- ========== 开始页面 ========== -->
+  <div id="startPage" class="min-h-screen flex flex-col items-center justify-center p-4 campus-bg">
+    <div class="max-w-md w-full bg-white rounded-3xl p-8 card-shadow text-center bounce-in">
+      <div class="mb-6">
+        <div class="w-24 h-24 mx-auto bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mb-4">
+          <i class="fa fa-graduation-cap text-white text-4xl"></i>
+        </div>
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">大学生人格图鉴</h1>
+        <p class="text-gray-500">测测你是哪种类型的大学生？</p>
+      </div>
+      
+      <!-- 四种人预览 -->
+      <div class="grid grid-cols-2 gap-3 mb-6">
+        <div class="bg-red-50 rounded-xl p-3 text-left">
+          <span class="text-lg font-bold text-red-500">📚 BAILYN</span>
+          <p class="text-xs text-gray-500 mt-1">卷王 · 熬夜复习 · 焦虑</p>
+        </div>
+        <div class="bg-blue-50 rounded-xl p-3 text-left">
+          <span class="text-lg font-bold text-blue-500">🎮 WOODY</span>
+          <p class="text-xs text-gray-500 mt-1">佛系 · 电子产品 · 不慌</p>
+        </div>
+        <div class="bg-pink-50 rounded-xl p-3 text-left">
+          <span class="text-lg font-bold text-pink-500">🎤 ISABELLA</span>
+          <p class="text-xs text-gray-500 mt-1">可爱 · 唱歌 · 吃货氪金</p>
+        </div>
+        <div class="bg-green-50 rounded-xl p-3 text-left">
+          <span class="text-lg font-bold text-green-500">⚽ ROBERT</span>
+          <p class="text-xs text-gray-500 mt-1">运动 · 火锅 · 串寝室</p>
+        </div>
+      </div>
+      
+      <div class="bg-gray-50 rounded-xl p-4 mb-6 text-left">
+        <h3 class="font-semibold text-gray-700 mb-2">📋 测试说明</h3>
+        <ul class="text-sm text-gray-600 space-y-1">
+          <li>• 共 <span class="font-bold text-primary">12</span> 道题，约需 2 分钟</li>
+          <li>• 凭第一直觉选择，没有对错</li>
+          <li>• 结果仅供娱乐，欢迎对号入座</li>
+          <li>• 转发给室友，看看谁是真卷王</li>
+        </ul>
+      </div>
+      
+      <button onclick="startQuiz()" 
+        class="w-full py-4 bg-gradient-to-r from-primary to-secondary text-white font-bold rounded-xl text-lg hover:opacity-90 transition-opacity">
+        开始测试 <i class="fa fa-arrow-right ml-2"></i>
+      </button>
+      
+      <p class="mt-4 text-xs text-gray-400">
+        某大学宿舍内部流传的人格分类
+      </p>
+    </div>
+  </div>
+
+  <!-- ========== 答题页面 ========== -->
+  <div id="quizPage" class="min-h-screen flex flex-col items-center justify-center p-4 campus-bg hidden">
+    <div class="max-w-md w-full bg-white rounded-3xl p-8 card-shadow">
+      <!-- 进度条 -->
+      <div class="mb-6">
+        <div class="flex justify-between text-sm text-gray-500 mb-2">
+          <span>答题进度</span>
+          <span id="progressText">1 / 12</span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-2">
+          <div id="progressBar" class="bg-gradient-to-r from-primary to-secondary h-2 rounded-full transition-all duration-300" style="width: 8%"></div>
+        </div>
+      </div>
+      
+      <!-- 问题 -->
+      <div class="mb-6">
+        <h2 id="questionText" class="text-xl font-bold text-gray-800 mb-6 leading-relaxed">
+          期末考试前一周，你的状态是？
+        </h2>
+        
+        <div id="optionsContainer" class="space-y-3">
+          <!-- 选项会通过JS动态生成 -->
+        </div>
+      </div>
+      
+      <!-- 上一题按钮 -->
+      <div class="flex justify-between items-center mt-4">
+        <button onclick="prevQuestion()" id="prevBtn" 
+          class="px-4 py-2 text-gray-500 hover:text-gray-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          disabled>
+          <i class="fa fa-chevron-left mr-1"></i> 上一题
+        </button>
+        <span class="text-sm text-gray-400">第 <span id="currentQNum">1</span> 题</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 结果页面 ========== -->
+  <div id="resultPage" class="min-h-screen flex flex-col items-center justify-center p-4 campus-bg hidden">
+    <div class="max-w-md w-full bg-white rounded-3xl p-8 card-shadow text-center bounce-in">
+      <!-- 结果类型 -->
+      <div class="mb-6">
+        <div id="resultBadge" class="inline-block px-4 py-1 bg-red-500 text-white rounded-full text-sm font-bold mb-3">
+          你的测试结果
+        </div>
+        <h2 class="text-4xl font-bold text-gray-800 mb-2">
+          <span id="resultId">BAIL</span> · <span id="resultName">Bailyn型</span>
+        </h2>
+        <p id="resultSlogan" class="text-lg text-gray-500 italic">"别问，问就是在学习"</p>
+      </div>
+      
+      <!-- 匹配度 -->
+      <div class="mb-6">
+        <div class="text-sm text-gray-500 mb-1">匹配度</div>
+        <div class="text-3xl font-bold text-primary" id="matchPercentage">92%</div>
+      </div>
+      
+      <!-- 描述 -->
+      <div class="bg-gray-50 rounded-xl p-4 mb-4 text-left">
+        <p id="resultDescription" class="text-gray-600 mb-4">
+          传说中的卷王本王，从不请假从不缺勤，眼里只有GPA，期末复习到凌晨是常态，一点风吹草动就能让焦虑指数飙升。
+        </p>
+        
+        <h4 class="font-semibold text-gray-700 mb-2">✨ 你的特点</h4>
+        <ul id="resultTraits" class="text-sm text-gray-600 space-y-1">
+          <li>• 全勤奖得主，大学四年没请过假</li>
+          <li>• 复习到凌晨是基本操作</li>
+          <li>• 容易一惊一乍，特别焦虑</li>
+        </ul>
+      </div>
+      
+      <!-- 适合/避免 -->
+      <div class="grid grid-cols-2 gap-3 mb-6">
+        <div class="bg-green-50 rounded-xl p-3 text-left">
+          <h5 class="font-semibold text-green-600 text-sm mb-1">✅ 适合</h5>
+          <p id="suitableFor" class="text-xs text-gray-600">考研考公学术道路</p>
+        </div>
+        <div class="bg-red-50 rounded-xl p-3 text-left">
+          <h5 class="font-semibold text-red-500 text-sm mb-1">❌ 避雷</h5>
+          <p id="avoid" class="text-xs text-gray-600">别在考试前约出去玩</p>
+        </div>
+      </div>
+      
+      <!-- 雷达图 -->
+      <div class="mb-6">
+        <h4 class="font-semibold text-gray-700 mb-3">📊 六维分析图</h4>
+        <canvas id="radarChart" height="250"></canvas>
+      </div>
+      
+      <!-- 室友匹配建议 -->
+      <div class="bg-yellow-50 rounded-xl p-4 mb-6 text-left">
+        <h4 class="font-semibold text-yellow-700 mb-2">🏠 最佳室友组合</h4>
+        <p id="roommateAdvice" class="text-sm text-gray-600">
+          和Woody型住一起可能会被气死；找个同样爱学习的Bailyn型互相卷吧！
+        </p>
+      </div>
+      
+      <!-- 操作按钮 -->
+      <div class="space-y-3">
+        <button onclick="shareResult()" 
+          class="w-full py-3 bg-gradient-to-r from-primary to-secondary text-white font-bold rounded-xl hover:opacity-90 transition-opacity">
+          <i class="fa fa-share-alt mr-2"></i> 分享给室友
+        </button>
+        <button onclick="restartQuiz()" 
+          class="w-full py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors">
+          <i class="fa fa-refresh mr-2"></i> 再测一次
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== JS 逻辑 ========== -->
+  <script src="js/algorithm.js"></script>
+  <script src="js/types.js"></script>
+  <script src="js/questions.js"></script>
+  
+  <script>
+    // 全局变量
+    let test = null;
+    let currentQuestionIndex = 0;
+    let userAnswers = [];
+
+    // 类型对应的配色
+    const TYPE_COLORS = {
+      'BAIL': { bg: 'bg-red-500', light: 'bg-red-50', text: 'text-red-500' },
+      'WOOD': { bg: 'bg-blue-500', light: 'bg-blue-50', text: 'text-blue-500' },
+      'ISAB': { bg: 'bg-pink-500', light: 'bg-pink-50', text: 'text-pink-500' },
+      'ROBE': { bg: 'bg-green-500', light: 'bg-green-50', text: 'text-green-500' }
+    };
+
+    // 室友建议
+    const ROOMMATE_ADVICE = {
+      'BAIL': '和Woody型住一起可能会被气死；找个同样爱学习的Bailyn型互相卷，或者和Robert型住一起能带你放松！',
+      'WOOD': '别和Bailyn型住一起，会被卷得压力山大；找Isabella型当室友，每天都有好吃的和好心情！',
+      'ISAB': 'Robert型是最佳室友，能带你出去玩还能请你吃火锅；和Woody型住一起也很和谐不闹矛盾。',
+      'ROBE': '谁都愿意和你当室友！但注意别带太多人回宿舍串寝，会打扰到Bailyn型室友学习哦。'
+    };
+
+    // 初始化
+    function init() {
+      test = new PersonalityTest();
+      test.initDimensions();
+    }
+
+    // 开始测试
+    function startQuiz() {
+      init();
+      currentQuestionIndex = 0;
+      userAnswers = [];
+      
+      document.getElementById('startPage').classList.add('hidden');
+      document.getElementById('quizPage').classList.remove('hidden');
+      
+      showQuestion(0);
+    }
+
+    // 显示问题
+    function showQuestion(index) {
+      const question = QUESTIONS[index];
+      
+      // 更新进度
+      const progress = ((index + 1) / QUESTIONS.length) * 100;
+      document.getElementById('progressBar').style.width = progress + '%';
+      document.getElementById('progressText').textContent = `${index + 1} / ${QUESTIONS.length}`;
+      document.getElementById('currentQNum').textContent = index + 1;
+      
+      // 显示问题文本
+      document.getElementById('questionText').textContent = question.text;
+      
+      // 生成选项
+      const container = document.getElementById('optionsContainer');
+      container.innerHTML = '';
+      
+      question.options.forEach((option, optIndex) => {
+        const isSelected = userAnswers[index] === optIndex;
+        
+        const div = document.createElement('div');
+        div.className = `p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
+          isSelected 
+            ? 'border-primary bg-amber-50 transform scale-[1.02]' 
+            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+        }`;
+        div.innerHTML = `
+          <div class="flex items-center">
+            <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center mr-3 ${
+              isSelected ? 'border-primary bg-primary' : 'border-gray-300'
+            }">
+              ${isSelected ? '<i class="fa fa-check text-white text-xs"></i>' : ''}
+            </div>
+            <span class="text-gray-700">${option.text}</span>
+          </div>
+        `;
+        div.onclick = () => selectOption(optIndex);
+        container.appendChild(div);
+      });
+      
+      // 更新上一题按钮状态
+      document.getElementById('prevBtn').disabled = index === 0;
+    }
+
+    // 选择选项
+    function selectOption(optIndex) {
+      userAnswers[currentQuestionIndex] = optIndex;
+      
+      const question = QUESTIONS[currentQuestionIndex];
+      const option = question.options[optIndex];
+      
+      // 更新得分
+      if (option.dimensions) {
+        for (const [dim, points] of Object.entries(option.dimensions)) {
+          test.userScores[dim] += points;
+        }
+      }
+      
+      showQuestion(currentQuestionIndex);
+      
+      // 延迟到下一题
+      setTimeout(() => {
+        if (currentQuestionIndex < QUESTIONS.length - 1) {
+          currentQuestionIndex++;
+          showQuestion(currentQuestionIndex);
+        } else {
+          showResult();
+        }
+      }, 300);
+    }
+
+    // 上一题
+    function prevQuestion() {
+      if (currentQuestionIndex > 0) {
+        // 重置并重新计算
+        test.initDimensions();
+        for (let i = 0; i < currentQuestionIndex; i++) {
+          const q = QUESTIONS[i];
+          const opt = q.options[userAnswers[i]];
+          if (opt && opt.dimensions) {
+            for (const [dim, points] of Object.entries(opt.dimensions)) {
+              test.userScores[dim] += points;
+            }
+          }
+        }
+        
+        currentQuestionIndex--;
+        showQuestion(currentQuestionIndex);
+      }
+    }
+
+    // 显示结果
+    function showResult() {
+      const result = test.matchPersonalityType(PERSONALITY_TYPES);
+      const bestMatch = result.bestMatch;
+      const typeId = bestMatch.type.id;
+      const colors = TYPE_COLORS[typeId];
+      
+      // 更新UI
+      document.getElementById('resultBadge').className = `inline-block px-4 py-1 ${colors.bg} text-white rounded-full text-sm font-bold mb-3`;
+      document.getElementById('resultId').textContent = bestMatch.type.id;
+      document.getElementById('resultName').textContent = bestMatch.type.name;
+      document.getElementById('resultSlogan').textContent = `"${bestMatch.type.slogan}"`;
+      document.getElementById('resultDescription').textContent = bestMatch.type.description;
+      document.getElementById('matchPercentage').textContent = bestMatch.matchPercentage + '%';
+      document.getElementById('suitableFor').textContent = bestMatch.type.suitableFor;
+      document.getElementById('avoid').textContent = bestMatch.type.avoid;
+      document.getElementById('roommateAdvice').textContent = ROOMMATE_ADVICE[typeId];
+      
+      // 更新特点列表
+      const traitsHtml = bestMatch.type.traits.map(t => `<li>• ${t}</li>`).join('');
+      document.getElementById('resultTraits').innerHTML = traitsHtml;
+      
+      // 切换页面
+      document.getElementById('quizPage').classList.add('hidden');
+      document.getElementById('resultPage').classList.remove('hidden');
+      
+      // 绘制雷达图
+      drawRadarChart(result.userVector, typeId);
+    }
+
+    // 绘制雷达图
+    function drawRadarChart(userVector, typeId) {
+      const ctx = document.getElementById('radarChart').getContext('2d');
+      const colors = TYPE_COLORS[typeId];
+      
+      const labels = ['焦虑指数', '社交达人', '氪金程度', '熬夜指数', '户外活动', '情绪波动'];
+      const userData = [
+        Math.max(0, Math.min(10, userVector.anxiety + 5)),
+        Math.max(0, Math.min(10, userVector.social + 5)),
+        Math.max(0, Math.min(10, userVector.spending + 5)),
+        Math.max(0, Math.min(10, userVector.sleep + 5)),
+        Math.max(0, Math.min(10, userVector.outdoor + 5)),
+        Math.max(0, Math.min(10, userVector.emotion + 5))
+      ];
+      
+      // 根据类型选择颜色
+      const colorHex = {
+        'BAIL': '#EF4444',  // 红
+        'WOOD': '#3B82F6',  // 蓝
+        'ISAB': '#EC4899',  // 粉
+        'ROBE': '#10B981'   // 绿
+      }[typeId];
+      
+      new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: '你的六维属性',
+            data: userData,
+            fill: true,
+            backgroundColor: colorHex + '33',
+            borderColor: colorHex,
+            pointBackgroundColor: colorHex,
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: colorHex
+          }]
+        },
+        options: {
+          elements: { line: { borderWidth: 2 } },
+          scales: {
+            r: {
+              min: 0, max: 10,
+              ticks: { display: false, stepSize: 2 },
+              grid: { color: 'rgba(0, 0, 0, 0.05)' }
+            }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+
+    // 分享结果
+    function shareResult() {
+      const resultId = document.getElementById('resultId').textContent;
+      const resultName = document.getElementById('resultName').textContent;
+      const slogan = document.getElementById('resultSlogan').textContent;
+      
+      const text = `我测出了【${resultId} ${resultName}】人格！${slogan} —— 快来测测你是哪种大学生？`;
+      
+      if (navigator.share) {
+        navigator.share({ title: '大学生人格图鉴', text: text });
+      } else {
+        navigator.clipboard.writeText(text).then(() => {
+          alert('已复制到剪贴板！快发给室友看看谁是真卷王~');
+        });
+      }
+    }
+
+    // 重新测试
+    function restartQuiz() {
+      document.getElementById('resultPage').classList.add('hidden');
+      document.getElementById('startPage').classList.remove('hidden');
+    }
+
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
