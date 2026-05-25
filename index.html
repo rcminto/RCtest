@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>大学生人格图鉴 - 你是Bailyn还是Robert？</title>
+  <title>Beecoming人格测试 - 发现你的专属人格</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
@@ -55,27 +55,35 @@
         <div class="w-24 h-24 mx-auto bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mb-4">
           <i class="fa fa-graduation-cap text-white text-4xl"></i>
         </div>
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">大学生人格图鉴</h1>
-        <p class="text-gray-500">测测你是哪种类型的大学生？</p>
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Beecoming 人格测试</h1>
+        <p class="text-gray-500">测测你是哪种独特的人格？</p>
       </div>
       
-      <!-- 四种人预览 -->
-      <div class="grid grid-cols-2 gap-3 mb-6">
+      <!-- 六种人预览 -->
+      <div class="grid grid-cols-3 gap-3 mb-6">
         <div class="bg-red-50 rounded-xl p-3 text-left">
-          <span class="text-lg font-bold text-red-500">📚 BAILYN</span>
-          <p class="text-xs text-gray-500 mt-1">卷王 · 熬夜复习 · 焦虑</p>
+          <span class="text-sm font-bold text-red-500">📚 BAILYN</span>
+          <p class="text-xs text-gray-500 mt-1">卷王</p>
         </div>
         <div class="bg-blue-50 rounded-xl p-3 text-left">
-          <span class="text-lg font-bold text-blue-500">🎮 WOODY</span>
-          <p class="text-xs text-gray-500 mt-1">佛系 · 电子产品 · 不慌</p>
+          <span class="text-sm font-bold text-blue-500">🎮 WOODY</span>
+          <p class="text-xs text-gray-500 mt-1">佛系</p>
         </div>
         <div class="bg-pink-50 rounded-xl p-3 text-left">
-          <span class="text-lg font-bold text-pink-500">🎤 ISABELLA</span>
-          <p class="text-xs text-gray-500 mt-1">可爱 · 唱歌 · 吃货氪金</p>
+          <span class="text-sm font-bold text-pink-500">🎤 ISABELLA</span>
+          <p class="text-xs text-gray-500 mt-1">可爱</p>
         </div>
         <div class="bg-green-50 rounded-xl p-3 text-left">
-          <span class="text-lg font-bold text-green-500">⚽ ROBERT</span>
-          <p class="text-xs text-gray-500 mt-1">运动 · 火锅 · 串寝室</p>
+          <span class="text-sm font-bold text-green-500">⚽ ROBERT</span>
+          <p class="text-xs text-gray-500 mt-1">运动</p>
+        </div>
+        <div class="bg-orange-50 rounded-xl p-3 text-left">
+          <span class="text-sm font-bold text-orange-500">🍪 RITA</span>
+          <p class="text-xs text-gray-500 mt-1">暖心</p>
+        </div>
+        <div class="bg-purple-50 rounded-xl p-3 text-left">
+          <span class="text-sm font-bold text-purple-500">📱 ELISE</span>
+          <p class="text-xs text-gray-500 mt-1">反差萌</p>
         </div>
       </div>
       
@@ -92,6 +100,11 @@
       <button onclick="startQuiz()" 
         class="w-full py-4 bg-gradient-to-r from-primary to-secondary text-white font-bold rounded-xl text-lg hover:opacity-90 transition-opacity">
         开始测试 <i class="fa fa-arrow-right ml-2"></i>
+      </button>
+      
+      <button onclick="showStats()" 
+        class="w-full py-3 mt-3 bg-purple-100 text-purple-600 font-bold rounded-xl hover:bg-purple-200 transition-colors">
+        <i class="fa fa-pie-chart mr-2"></i> 查看人格分布统计
       </button>
       
       <p class="mt-4 text-xs text-gray-400">
@@ -183,6 +196,14 @@
         </div>
       </div>
       
+      <!-- 人格成分分析 -->
+      <div class="mb-6">
+        <h4 class="font-semibold text-gray-700 mb-3">🧬 你的人格成分</h4>
+        <div id="personalityBreakdown" class="space-y-2">
+          <!-- 动态生成 -->
+        </div>
+      </div>
+      
       <!-- 雷达图 -->
       <div class="mb-6">
         <h4 class="font-semibold text-gray-700 mb-3">📊 六维分析图</h4>
@@ -203,11 +224,48 @@
           class="w-full py-3 bg-gradient-to-r from-primary to-secondary text-white font-bold rounded-xl hover:opacity-90 transition-opacity">
           <i class="fa fa-share-alt mr-2"></i> 分享给室友
         </button>
+        <button onclick="showStats()" 
+          class="w-full py-3 bg-purple-500 text-white font-bold rounded-xl hover:bg-purple-600 transition-colors">
+          <i class="fa fa-pie-chart mr-2"></i> 查看统计数据
+        </button>
         <button onclick="restartQuiz()" 
           class="w-full py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors">
           <i class="fa fa-refresh mr-2"></i> 再测一次
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- ========== 统计页面 ========== -->
+  <div id="statsPage" class="min-h-screen flex flex-col items-center justify-center p-4 campus-bg hidden">
+    <div class="max-w-md w-full bg-white rounded-3xl p-8 card-shadow text-center bounce-in">
+      <div class="mb-6">
+        <div class="w-20 h-20 mx-auto bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-4">
+          <i class="fa fa-pie-chart text-white text-3xl"></i>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">人格分布统计</h2>
+        <p class="text-gray-500">已有 <span id="totalTests" class="font-bold text-purple-600">0</span> 人完成测试</p>
+        <p id="dataSourceHint" class="text-xs text-gray-400 mt-1"></p>
+      </div>
+      
+      <!-- 饼图 -->
+      <div class="mb-6">
+        <canvas id="pieChart"></canvas>
+      </div>
+      
+      <!-- 说明 -->
+      <div class="bg-gray-50 rounded-xl p-4 mb-6 text-left text-sm text-gray-600">
+        <p>💡 <strong>数据说明</strong></p>
+        <p class="mt-2">• 统计数据保存在你的浏览器本地</p>
+        <p>• 只会记录你在这台设备上完成的测试</p>
+        <p>• 刷新页面或换设备不会保留历史数据</p>
+      </div>
+      
+      <!-- 返回按钮 -->
+      <button onclick="backToStart()" 
+        class="w-full py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors">
+        <i class="fa fa-home mr-2"></i> 返回首页
+      </button>
     </div>
   </div>
 
@@ -227,7 +285,9 @@
       'BAIL': { bg: 'bg-red-500', light: 'bg-red-50', text: 'text-red-500' },
       'WOOD': { bg: 'bg-blue-500', light: 'bg-blue-50', text: 'text-blue-500' },
       'ISAB': { bg: 'bg-pink-500', light: 'bg-pink-50', text: 'text-pink-500' },
-      'ROBE': { bg: 'bg-green-500', light: 'bg-green-50', text: 'text-green-500' }
+      'ROBE': { bg: 'bg-green-500', light: 'bg-green-50', text: 'text-green-500' },
+      'RITA': { bg: 'bg-orange-500', light: 'bg-orange-50', text: 'text-orange-500' },
+      'ELIS': { bg: 'bg-purple-500', light: 'bg-purple-50', text: 'text-purple-500' }
     };
 
     // 室友建议
@@ -235,7 +295,9 @@
       'BAIL': '和Woody型住一起可能会被气死；找个同样爱学习的Bailyn型互相卷，或者和Robert型住一起能带你放松！',
       'WOOD': '别和Bailyn型住一起，会被卷得压力山大；找Isabella型当室友，每天都有好吃的和好心情！',
       'ISAB': 'Robert型是最佳室友，能带你出去玩还能请你吃火锅；和Woody型住一起也很和谐不闹矛盾。',
-      'ROBE': '谁都愿意和你当室友！但注意别带太多人回宿舍串寝，会打扰到Bailyn型室友学习哦。'
+      'ROBE': '谁都愿意和你当室友！但注意别带太多人回宿舍串寝，会打扰到Bailyn型室友学习哦。',
+      'RITA': '全宿舍的小太阳！谁和你住一起谁幸福，Elise型室友会被你喂胖的~',
+      'ELIS': 'Rita型是神仙室友，会给你投喂好吃的；但别让她给你拍照，你会立刻躲起来的！'
     };
 
     // 初始化
@@ -354,6 +416,12 @@
       const typeId = bestMatch.type.id;
       const colors = TYPE_COLORS[typeId];
       
+      // 记录统计数据（本地 + 后台）
+      recordResult(typeId);
+      
+      // 异步提交到后台数据库，不阻塞页面显示
+      submitResultToBackend(typeId, result.userVector).catch(() => {});
+      
       // 更新UI
       document.getElementById('resultBadge').className = `inline-block px-4 py-1 ${colors.bg} text-white rounded-full text-sm font-bold mb-3`;
       document.getElementById('resultId').textContent = bestMatch.type.id;
@@ -369,12 +437,154 @@
       const traitsHtml = bestMatch.type.traits.map(t => `<li>• ${t}</li>`).join('');
       document.getElementById('resultTraits').innerHTML = traitsHtml;
       
+      // 渲染人格成分分析
+      renderPersonalityBreakdown(result.allMatches);
+      
       // 切换页面
       document.getElementById('quizPage').classList.add('hidden');
       document.getElementById('resultPage').classList.remove('hidden');
       
       // 绘制雷达图
       drawRadarChart(result.userVector, typeId);
+    }
+    
+    // 渲染人格成分分析进度条
+    function renderPersonalityBreakdown(matches) {
+      const container = document.getElementById('personalityBreakdown');
+      let html = '';
+      
+      matches.forEach((match, index) => {
+        const typeId = match.type.id;
+        const colors = TYPE_COLORS[typeId];
+        const percentage = match.displayPercentage || match.percentage;
+        
+        html += `
+          <div class="flex items-center text-sm">
+            <span class="w-16 text-right mr-3 ${colors.text} font-semibold">${match.type.id}</span>
+            <div class="flex-1 bg-gray-200 rounded-full h-4 overflow-hidden">
+              <div class="${colors.bg} h-4 rounded-full transition-all duration-500" style="width: ${percentage}%"></div>
+            </div>
+            <span class="ml-3 w-10 text-gray-600 font-medium">${percentage}%</span>
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
+    }
+    
+    // ========== 统计功能 ==========
+    const STORAGE_KEY = 'beecoming_personality_stats';
+    
+    // 初始化统计数据
+    function initStats() {
+      const stats = localStorage.getItem(STORAGE_KEY);
+      if (!stats) {
+        const initialStats = {
+          'BAIL': 0, 'WOOD': 0, 'ISAB': 0, 
+          'ROBE': 0, 'RITA': 0, 'ELIS': 0,
+          'total': 0
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(initialStats));
+      }
+    }
+    
+    // 记录测试结果
+    function recordResult(typeId) {
+      initStats();
+      const stats = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      stats[typeId]++;
+      stats.total++;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(stats));
+    }
+    
+    // 获取统计数据
+    function getStats() {
+      initStats();
+      return JSON.parse(localStorage.getItem(STORAGE_KEY));
+    }
+    
+    // 显示统计页面
+    function showStats() {
+      document.getElementById('resultPage').classList.add('hidden');
+      document.getElementById('startPage').classList.add('hidden');
+      document.getElementById('statsPage').classList.remove('hidden');
+      drawPieChart();
+    }
+    
+    // 绘制饼图（支持后台 + 本地数据）
+    async function drawPieChart() {
+      const statsData = await getCombinedStats();
+      const stats = statsData.byType;
+      stats.total = statsData.total;
+      
+      // 显示数据来源提示
+      const sourceHint = document.getElementById('dataSourceHint');
+      if (sourceHint) {
+        sourceHint.textContent = statsData.source === 'backend' 
+          ? '数据来源：全局数据库' 
+          : '数据来源：本地存储';
+      }
+      
+      const ctx = document.getElementById('pieChart').getContext('2d');
+      
+      const typeNames = {
+        'BAIL': 'Bailyn型',
+        'WOOD': 'Woody型', 
+        'ISAB': 'Isabella型',
+        'ROBE': 'Robert型',
+        'RITA': 'Rita型',
+        'ELIS': 'Elise型'
+      };
+      
+      const colorHex = {
+        'BAIL': '#EF4444',
+        'WOOD': '#3B82F6',
+        'ISAB': '#EC4899',
+        'ROBE': '#10B981',
+        'RITA': '#F97316',
+        'ELIS': '#8B5CF6'
+      };
+      
+      const typeIds = ['BAIL', 'WOOD', 'ISAB', 'ROBE', 'RITA', 'ELIS'];
+      const data = typeIds.map(id => stats[id]);
+      const labels = typeIds.map(id => `${typeNames[id]} (${stats[id]})`);
+      const colors = typeIds.map(id => colorHex[id]);
+      
+      document.getElementById('totalTests').textContent = stats.total;
+      
+      // 销毁旧图表
+      if (window.pieChartInstance) {
+        window.pieChartInstance.destroy();
+      }
+      
+      window.pieChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: data,
+            backgroundColor: colors,
+            borderWidth: 2,
+            borderColor: '#fff'
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { padding: 15, font: { size: 12 } }
+            }
+          }
+        }
+      });
+    }
+    
+    // 返回开始页
+    function backToStart() {
+      document.getElementById('statsPage').classList.add('hidden');
+      document.getElementById('resultPage').classList.add('hidden');
+      document.getElementById('startPage').classList.remove('hidden');
     }
 
     // 绘制雷达图
@@ -397,7 +607,9 @@
         'BAIL': '#EF4444',  // 红
         'WOOD': '#3B82F6',  // 蓝
         'ISAB': '#EC4899',  // 粉
-        'ROBE': '#10B981'   // 绿
+        'ROBE': '#10B981',  // 绿
+        'RITA': '#F97316',  // 橙
+        'ELIS': '#8B5CF6'   // 紫
       }[typeId];
       
       new Chart(ctx, {
@@ -436,10 +648,10 @@
       const resultName = document.getElementById('resultName').textContent;
       const slogan = document.getElementById('resultSlogan').textContent;
       
-      const text = `我测出了【${resultId} ${resultName}】人格！${slogan} —— 快来测测你是哪种大学生？`;
+      const text = `我测出了【${resultId} ${resultName}】人格！${slogan} —— Beecoming人格测试，快来测测你的专属人格！`;
       
       if (navigator.share) {
-        navigator.share({ title: '大学生人格图鉴', text: text });
+        navigator.share({ title: 'Beecoming人格测试', text: text });
       } else {
         navigator.clipboard.writeText(text).then(() => {
           alert('已复制到剪贴板！快发给室友看看谁是真卷王~');
